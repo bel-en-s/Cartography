@@ -9,15 +9,14 @@ Drawing.SimpleGraph = function(options) {
   this.show_info = options.showInfo || false;
   this.show_labels = options.showLabels || false;
   this.selection = options.selection || false;
-  this.limit = options.limit || 39; // updated limit for 39 nodes
-  this.nodes_count = options.numNodes || 39; // updated number of nodes to 39
+  this.limit = options.limit || 39;
+  this.nodes_count = options.numNodes || 39;
   this.edges_count = options.numEdges || 4;
 
   var camera, controls, scene, renderer, interaction, geometry, object_selection;
   var stats;
   var info_text = {};
   var graph = new GRAPHVIS.Graph({limit: options.limit});
-
   var geometries = [];
 
   var that = this;
@@ -33,7 +32,7 @@ Drawing.SimpleGraph = function(options) {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 1000000);
-    camera.position.z = 10000;
+    camera.position.z = 20000;  // Increase camera distance for bigger node spacing
 
     controls = new THREE.TrackballControls(camera);
 
@@ -73,14 +72,19 @@ Drawing.SimpleGraph = function(options) {
       object_selection = new THREE.ObjectSelection({
         domElement: renderer.domElement,
         selected: function (obj) {
-          // display info
+          // Display info
           if (obj !== null) {
             info_text.select = "Object " + obj.id;
+            // Show the selected node's texture in an image element
+            var textureSrc = obj.material.map.image.src;
+            document.getElementById('selected-node-image').src = textureSrc;
           } else {
             delete info_text.select;
+            document.getElementById('selected-node-image').src = ''; // Clear image when deselected
           }
         },
         clicked: function (obj) {
+          // You can add any additional click functionality here
         }
       });
     }
@@ -103,19 +107,23 @@ Drawing.SimpleGraph = function(options) {
       info.setAttributeNode(id_attr);
       document.body.appendChild(info);
     }
+
+    // Create image element to display selected node's texture
+    var imageElement = document.createElement('img');
+    imageElement.setAttribute('id', 'selected-node-image');
+    imageElement.style.position = 'absolute';
+    imageElement.style.bottom = '10px';
+    imageElement.style.right = '10px';
+    imageElement.style.width = '200px';
+    imageElement.style.height = '200px';
+    document.body.appendChild(imageElement);
   }
 
-
-  /**
-   *  Creates a graph with random nodes and edges.
-   *  Number of nodes and edges can be set with
-   *  numNodes and numEdges.
-   */
   function createGraph() {
     var node = new GRAPHVIS.Node(0);
     node.data.title = "This is node " + node.id;
     graph.addNode(node);
-    drawNode(node, 0); // pass index 0 for the first image
+    drawNode(node, 0);
 
     var nodes = [];
     nodes.push(node);
@@ -130,7 +138,7 @@ Drawing.SimpleGraph = function(options) {
         if (graph.addNode(target_node)) {
           target_node.data.title = "This is node " + target_node.id;
 
-          drawNode(target_node, steps); // pass the current step as the image index
+          drawNode(target_node, steps);
           nodes.push(target_node);
           if (graph.addEdge(node, target_node)) {
             drawEdge(node, target_node);
@@ -150,13 +158,8 @@ Drawing.SimpleGraph = function(options) {
     info_text.edges = "Edges " + graph.edges.length;
   }
 
-
-  /**
-   *  Create a node object and add it to the scene.
-   *  Each node will have a different texture based on the images array.
-   */
   function drawNode(node, index) {
-    var texture = THREE.ImageUtils.loadTexture('img/' + (index % 39 + 1) + '.JPG'); // select image based on index
+    var texture = THREE.ImageUtils.loadTexture('img/' + (index % 39 + 1) + '.JPG');
     var material = new THREE.MeshBasicMaterial({map: texture, transparent: true});
     var draw_object = new THREE.Mesh(geometry, material);
     var label_object;
@@ -171,7 +174,8 @@ Drawing.SimpleGraph = function(options) {
       scene.add(node.data.label_object);
     }
 
-    var area = 3000; // distance?
+    // Increase the area to create more distance between nodes
+    var area = 10000; // Increased area for larger spacing
     draw_object.position.x = Math.floor(Math.random() * (area + area + 1) - area);
     draw_object.position.y = Math.floor(Math.random() * (area + area + 1) - area);
     if (that.layout === "3d") {
@@ -184,10 +188,6 @@ Drawing.SimpleGraph = function(options) {
     scene.add(node.data.draw_object);
   }
 
-
-  /**
-   *  Create an edge object (line) and add it to the scene.
-   */
   function drawEdge(source, target) {
     material = new THREE.LineBasicMaterial({color: 0xFF0000});
 
@@ -199,15 +199,11 @@ Drawing.SimpleGraph = function(options) {
     line.scale.x = line.scale.y = line.scale.z = 1;
     line.originalScale = 1;
 
-    // NOTE: Deactivated frustumCulled, otherwise it will not draw all lines (even though
-    // it looks like the lines are in the view frustum).
     line.frustumCulled = false;
 
     geometries.push(tmp_geo);
-
     scene.add(line);
   }
-
 
   function animate() {
     requestAnimationFrame(animate);
@@ -218,11 +214,9 @@ Drawing.SimpleGraph = function(options) {
     }
   }
 
-
   function render() {
     var i, length, node;
 
-    // Generate layout if not finished
     if (!graph.layout.finished) {
       info_text.calc = "<span style='color: red'>Calculating layout...</span>";
       graph.layout.generate();
@@ -230,13 +224,10 @@ Drawing.SimpleGraph = function(options) {
       info_text.calc = "";
     }
 
-    // Update position of lines (edges)
     for (i = 0; i < geometries.length; i++) {
       geometries[i].verticesNeedUpdate = true;
     }
 
-
-    // Show labels if set
     if (that.show_labels) {
       length = graph.nodes.length;
       for (i = 0; i < length; i++) {
@@ -246,29 +237,10 @@ Drawing.SimpleGraph = function(options) {
           node.data.label_object.position.y = node.data.draw_object.position.y - 100;
           node.data.label_object.position.z = node.data.draw_object.position.z;
           node.data.label_object.lookAt(camera.position);
-        } else {
-          var label_object;
-          if (node.data.title !== undefined) {
-            label_object = new THREE.Label(node.data.title, node.data.draw_object);
-          } else {
-            label_object = new THREE.Label(node.id, node.data.draw_object);
-          }
-          node.data.label_object = label_object;
-          scene.add(node.data.label_object);
-        }
-      }
-    } else {
-      length = graph.nodes.length;
-      for (i = 0; i < length; i++) {
-        node = graph.nodes[i];
-        if (node.data.label_object !== undefined) {
-          scene.remove(node.data.label_object);
-          node.data.label_object = undefined;
         }
       }
     }
 
-    // render selection
     if (that.selection) {
       object_selection.render(scene, camera);
     }
@@ -279,14 +251,10 @@ Drawing.SimpleGraph = function(options) {
     }
   }
 
-
   function randomFromTo(from, to) {
     return Math.floor(Math.random() * (to - from + 1) + from);
   }
 
-  /**
-   *  Prints some info about graph and layout.
-   */
   function printInfo() {
     var str = "";
     for (var key in info_text) {

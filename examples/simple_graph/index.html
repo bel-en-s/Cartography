@@ -52,6 +52,7 @@
   </head>
   <body onload="createDrawing()">
     <div id="options">
+      <h1> CARTOGRAFÍA DE AFECTOS</h1>
       <form>
         <!-- <p>
           <input type="checkbox" id="show_labels" onclick="drawing.show_labels = this.checked;">
@@ -62,6 +63,11 @@
         </p> -->
       </form>
     </div>
+
+    <div id="hover-image" style="position: absolute; display: none; z-index: 10;">
+      <img id="hover-img" src="" alt="Node Texture" style="max-width: 200px; max-height: 200px;">
+    </div>    
+
 
     <div style="position: absolute; bottom: 0;">
       Rotate: Left Mouse Button and Move<br />
