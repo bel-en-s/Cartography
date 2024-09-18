@@ -1,6 +1,10 @@
 /**
   @author David Piegza
 
+  // edits
+  - hacer array con muchas imagenes
+  - hacer bolas mas
+
   Implements a simple graph drawing with force-directed placement in 2D and 3D.
 
   It uses the force-directed-layout implemented in:
@@ -57,9 +61,9 @@ Drawing.SimpleGraph = function(options) {
   this.show_info = options.showInfo || false;
   this.show_labels = options.showLabels || false;
   this.selection = options.selection || false;
-  this.limit = options.limit || 10;
-  this.nodes_count = options.numNodes || 20;
-  this.edges_count = options.numEdges || 10;
+  this.limit = options.limit || 4;
+  this.nodes_count = options.numNodes || 4;
+  this.edges_count = options.numEdges || 4;
 
   var camera, controls, scene, renderer, interaction, geometry, object_selection;
   var stats;
@@ -80,7 +84,6 @@ Drawing.SimpleGraph = function(options) {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-
     camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 1000000);
     camera.position.z = 10000;
 
@@ -98,16 +101,22 @@ Drawing.SimpleGraph = function(options) {
 
     controls.keys = [ 65, 83, 68 ];
 
+    controls.minDistance = 2;
+
     controls.addEventListener('change', render);
 
     scene = new THREE.Scene();
 
     // Node geometry
     if(that.layout === "3d") {
-      geometry = new THREE.SphereGeometry(30);
+      geometry = new THREE.SphereGeometry(10);
     } else {
-      geometry = new THREE.BoxGeometry( 50, 50, 0 );
+      geometry = new THREE.BoxGeometry( 500, 50, 0 );
     }
+
+    // Texture
+    var texture = THREE.ImageUtils.loadTexture( 'img/texture.png' );
+    var material = new THREE.MeshBasicMaterial( { map: texture } );
 
     // Create node selection, if set
     if(that.selection) {
@@ -184,7 +193,7 @@ Drawing.SimpleGraph = function(options) {
 
     that.layout_options.width = that.layout_options.width || 2000;
     that.layout_options.height = that.layout_options.height || 2000;
-    that.layout_options.iterations = that.layout_options.iterations || 100000;
+    that.layout_options.iterations = that.layout_options.iterations || 100;
     that.layout_options.layout = that.layout_options.layout || that.layout;
     graph.layout = new Layout.ForceDirected(graph, that.layout_options);
     graph.layout.init();
@@ -197,7 +206,9 @@ Drawing.SimpleGraph = function(options) {
    *  Create a node object and add it to the scene.
    */
   function drawNode(node) {
-    var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {  color: Math.random() * 0xe0e0e0, opacity: 0.8 } ) );
+    var texture = THREE.ImageUtils.loadTexture( 'img/0.jpg' );
+    var material = new THREE.MeshBasicMaterial( { map: texture, transparent: true } );
+    var draw_object = new THREE.Mesh( geometry, material );
     var label_object;
 
     if(that.show_labels) {
@@ -210,10 +221,9 @@ Drawing.SimpleGraph = function(options) {
       scene.add( node.data.label_object );
     }
 
-    var area = 5000;
+    var area = 3000; // distancia?
     draw_object.position.x = Math.floor(Math.random() * (area + area + 1) - area);
     draw_object.position.y = Math.floor(Math.random() * (area + area + 1) - area);
-
     if(that.layout === "3d") {
       draw_object.position.z = Math.floor(Math.random() * (area + area + 1) - area);
     }
@@ -229,7 +239,7 @@ Drawing.SimpleGraph = function(options) {
    *  Create an edge object (line) and add it to the scene.
    */
   function drawEdge(source, target) {
-      material = new THREE.LineBasicMaterial({ color: 0x606060 });
+      material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
 
       var tmp_geo = new THREE.Geometry();
       tmp_geo.vertices.push(source.data.draw_object.position);
