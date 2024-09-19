@@ -97,7 +97,7 @@ Drawing.SimpleGraph = function(options) {
         domElement: renderer.domElement,
         selected: function (obj) {
           // Display info and handle node selection
-          if (obj !== null) {
+          if (obj !== null && obj.material && obj.material.map && obj.material.map.image) {
             info_text.select = "Object " + obj.id;
             var textureSrc = obj.material.map.image.src;
             document.getElementById('selected-node-image').src = textureSrc;
@@ -192,7 +192,7 @@ Drawing.SimpleGraph = function(options) {
   }
 
   function drawNode(node, index) {
-    var texture = THREE.ImageUtils.loadTexture('img/' + (index % 39 + 1) + '.JPG');
+    var texture = THREE.ImageUtils.loadTexture('img/rezized/' + (index % 39 + 1) + '.jpg');
     var material = new THREE.MeshBasicMaterial({map: texture, transparent: true});
     var draw_object = new THREE.Mesh(geometry, material);
     var label_object;
