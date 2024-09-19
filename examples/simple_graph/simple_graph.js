@@ -274,6 +274,11 @@ Drawing.SimpleGraph = function(options) {
 
   function printInfo() {
     var str = "";
+    if (window.innerWidth > 768) {
+      document.getElementById("selected-node-image").style.position = "absolute";
+      document.getElementById("selected-node-image").style.top = "40%";
+      document.getElementById("selected-node-image").style.left = "20%";
+    }
     for (var key in info_text) {
       if (Object.prototype.hasOwnProperty.call(info_text, key)) {
         str += info_text[key] + " ";
