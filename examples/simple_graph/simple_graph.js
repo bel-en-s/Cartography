@@ -18,6 +18,7 @@ Drawing.SimpleGraph = function(options) {
   var info_text = {};
   var graph = new GRAPHVIS.Graph({limit: options.limit});
   var geometries = [];
+  var selectedImage = null;
 
   var that = this;
 
@@ -26,6 +27,11 @@ Drawing.SimpleGraph = function(options) {
   animate();
 
   function init() {
+    // Disable default pinch-to-zoom for mobile browsers
+    document.addEventListener('touchmove', function(event) {
+      event.preventDefault();
+    }, { passive: false });
+
     // Three.js initialization
     renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -34,7 +40,7 @@ Drawing.SimpleGraph = function(options) {
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100000000);
     camera.position.z = 50000;  // Increase camera distance for bigger node spacing
 
-    controls = new THREE.TrackballControls(camera);
+    controls = new THREE.TrackballControls(camera, renderer.domElement);
 
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 5.2;
@@ -43,7 +49,7 @@ Drawing.SimpleGraph = function(options) {
     controls.noZoom = false;
     controls.noPan = false;
 
-    controls.staticMoving = false;
+    controls.staticMoving = true;
     controls.dynamicDampingFactor = 0.3;
 
     controls.keys = [65, 83, 68];
@@ -72,19 +78,19 @@ Drawing.SimpleGraph = function(options) {
       object_selection = new THREE.ObjectSelection({
         domElement: renderer.domElement,
         selected: function (obj) {
-          // Display info
+          // Display info and handle node selection
           if (obj !== null) {
             info_text.select = "Object " + obj.id;
-            // Show the selected node's texture in an image element
             var textureSrc = obj.material.map.image.src;
             document.getElementById('selected-node-image').src = textureSrc;
+            selectedImage = document.getElementById('selected-node-image');
+            selectedImage.style.display = 'block';  // Show selected image
           } else {
-            delete info_text.select;
-            document.getElementById('selected-node-image').src = ''; // Clear image when deselected
+            deselectImage();
           }
         },
         clicked: function (obj) {
-          // You can add any additional click functionality here
+          // Additional click functionality can be added here
         }
       });
     }
@@ -115,9 +121,17 @@ Drawing.SimpleGraph = function(options) {
     imageElement.style.top = '50%';
     imageElement.style.left = '50%';
     imageElement.style.transform = 'translate(-50%, -50%)';
-    imageElement.style.width = '90%';
+    imageElement.style.width = '50%';
     imageElement.style.height = 'auto';
+    imageElement.style.display = 'none'; // Initially hidden
     document.body.appendChild(imageElement);
+
+    // Handle second touch to deselect image
+    document.addEventListener('touchend', (event) => {
+      if (selectedImage) {
+        deselectImage();
+      }
+    });
   }
 
   function createGraph() {
@@ -175,7 +189,6 @@ Drawing.SimpleGraph = function(options) {
       scene.add(node.data.label_object);
     }
 
-    // Increase the area to create more distance between nodes
     var area = 10000; // Increased area for larger spacing
     draw_object.position.x = Math.floor(Math.random() * (area + area + 1) - area);
     draw_object.position.y = Math.floor(Math.random() * (area + area + 1) - area);
@@ -216,8 +229,6 @@ Drawing.SimpleGraph = function(options) {
   }
 
   function render() {
-    var i, length, node;
-
     if (!graph.layout.finished) {
       info_text.calc = "<span style='color: red'>Calculating layout...</span>";
       graph.layout.generate();
@@ -225,21 +236,19 @@ Drawing.SimpleGraph = function(options) {
       info_text.calc = "";
     }
 
-    for (i = 0; i < geometries.length; i++) {
-      geometries[i].verticesNeedUpdate = true;
-    }
+    geometries.forEach(geometry => {
+      geometry.verticesNeedUpdate = true;
+    });
 
     if (that.show_labels) {
-      length = graph.nodes.length;
-      for (i = 0; i < length; i++) {
-        node = graph.nodes[i];
+      graph.nodes.forEach(node => {
         if (node.data.label_object !== undefined) {
           node.data.label_object.position.x = node.data.draw_object.position.x;
           node.data.label_object.position.y = node.data.draw_object.position.y - 100;
           node.data.label_object.position.z = node.data.draw_object.position.z;
           node.data.label_object.lookAt(camera.position);
         }
-      }
+      });
     }
 
     if (that.selection) {
@@ -249,6 +258,13 @@ Drawing.SimpleGraph = function(options) {
     renderer.render(scene, camera);
     if (that.show_stats) {
       stats.update();
+    }
+  }
+
+  function deselectImage() {
+    if (selectedImage) {
+      selectedImage.style.display = 'none'; // Hide the selected image
+      selectedImage = null;
     }
   }
 
