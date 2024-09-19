@@ -115,7 +115,7 @@ Drawing.SimpleGraph = function(options) {
     imageElement.style.top = '50%';
     imageElement.style.left = '50%';
     imageElement.style.transform = 'translate(-50%, -50%)';
-    imageElement.style.width = '200px';
+    imageElement.style.width = '90%';
     imageElement.style.height = 'auto';
     document.body.appendChild(imageElement);
   }
