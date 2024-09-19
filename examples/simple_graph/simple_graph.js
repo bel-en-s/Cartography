@@ -27,10 +27,10 @@ Drawing.SimpleGraph = function(options) {
   animate();
 
   function init() {
-    // Disable default pinch-to-zoom for mobile browsers
-    document.addEventListener('touchmove', function(event) {
-      event.preventDefault();
-    }, { passive: false });
+    // // Disable default pinch-to-zoom for mobile browsers
+    // document.addEventListener('touchmove', function(event) {
+    //   event.preventDefault();
+    // }, { passive: false });
 
     // Three.js initialization
     renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
@@ -40,7 +40,7 @@ Drawing.SimpleGraph = function(options) {
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100000000);
     camera.position.z = 50000;  // Increase camera distance for bigger node spacing
 
-    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    controls = new THREE.TrackballControls(camera);
 
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 5.2;
@@ -49,7 +49,7 @@ Drawing.SimpleGraph = function(options) {
     controls.noZoom = false;
     controls.noPan = false;
 
-    controls.staticMoving = true;
+    controls.staticMoving = false;
     controls.dynamicDampingFactor = 0.3;
 
     controls.keys = [65, 83, 68];
