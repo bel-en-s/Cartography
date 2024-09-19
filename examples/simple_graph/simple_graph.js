@@ -10,7 +10,7 @@ Drawing.SimpleGraph = function(options) {
   this.show_labels = options.showLabels || false;
   this.selection = options.selection || false;
   this.limit = options.limit || 39;
-  this.nodes_count = options.numNodes || 39;
+  this.nodes_count = options.numNodes || 390;
   this.edges_count = options.numEdges || 4;
 
   var camera, controls, scene, renderer, interaction, geometry, object_selection;
@@ -31,8 +31,8 @@ Drawing.SimpleGraph = function(options) {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 1000000);
-    camera.position.z = 20000;  // Increase camera distance for bigger node spacing
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100000000);
+    camera.position.z = 50000;  // Increase camera distance for bigger node spacing
 
     controls = new THREE.TrackballControls(camera);
 
@@ -112,10 +112,11 @@ Drawing.SimpleGraph = function(options) {
     var imageElement = document.createElement('img');
     imageElement.setAttribute('id', 'selected-node-image');
     imageElement.style.position = 'absolute';
-    imageElement.style.bottom = '10px';
-    imageElement.style.right = '10px';
+    imageElement.style.top = '50%';
+    imageElement.style.left = '50%';
+    imageElement.style.transform = 'translate(-50%, -50%)';
     imageElement.style.width = '200px';
-    imageElement.style.height = '200px';
+    imageElement.style.height = 'auto';
     document.body.appendChild(imageElement);
   }
 
