@@ -27,10 +27,10 @@ Drawing.SimpleGraph = function(options) {
   animate();
 
   function init() {
-    // // Disable default pinch-to-zoom for mobile browsers
-    // document.addEventListener('touchmove', function(event) {
-    //   event.preventDefault();
-    // }, { passive: false });
+    // Prevent default pinch-to-zoom for mobile browsers
+    document.addEventListener('touchmove', function(event) {
+      event.preventDefault();
+    }, { passive: false });
 
     // Three.js initialization
     renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
@@ -40,21 +40,20 @@ Drawing.SimpleGraph = function(options) {
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100000000);
     camera.position.z = 50000;  // Increase camera distance for bigger node spacing
 
-    controls = new THREE.TrackballControls(camera);
+    // Switch to OrbitControls for better mobile support
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = true; // Zoom works by default
+    controls.enableRotate = true; // Enable rotation
+    controls.enablePan = false; // Disable panning if not needed
 
-    controls.rotateSpeed = 0.5;
-    controls.zoomSpeed = 5.2;
-    controls.panSpeed = 1;
+    controls.rotateSpeed = 0.8;  // Adjust rotation speed
+    controls.zoomSpeed = 1.2;
 
-    controls.noZoom = false;
-    controls.noPan = false;
-
-    controls.staticMoving = false;
-    controls.dynamicDampingFactor = 0.3;
-
-    controls.keys = [65, 83, 68];
-
-    controls.minDistance = 2;
+    // Set touch gestures (rotate with one finger, zoom with two)
+    controls.touches = {
+      ONE: THREE.TOUCH.ROTATE,
+      TWO: THREE.TOUCH.DOLLY_PAN
+    };
 
     controls.addEventListener('change', render);
 
@@ -70,7 +69,7 @@ Drawing.SimpleGraph = function(options) {
     // Array of images for node textures
     var images = [];
     for (var i = 1; i <= 39; i++) {
-      images.push('img/' + i + '.JPG');
+      images.push('img/rezized/' + i + '.JPG');
     }
 
     // Create node selection, if set
@@ -78,7 +77,6 @@ Drawing.SimpleGraph = function(options) {
       object_selection = new THREE.ObjectSelection({
         domElement: renderer.domElement,
         selected: function (obj) {
-          // Display info and handle node selection
           if (obj !== null) {
             info_text.select = "Object " + obj.id;
             var textureSrc = obj.material.map.image.src;
@@ -121,7 +119,7 @@ Drawing.SimpleGraph = function(options) {
     imageElement.style.top = '50%';
     imageElement.style.left = '50%';
     imageElement.style.transform = 'translate(-50%, -50%)';
-    imageElement.style.width = '50%';
+    imageElement.style.width = '80%';
     imageElement.style.height = 'auto';
     imageElement.style.display = 'none'; // Initially hidden
     document.body.appendChild(imageElement);
@@ -274,15 +272,9 @@ Drawing.SimpleGraph = function(options) {
 
   function printInfo() {
     var str = "";
-    if (window.innerWidth > 768) {
-      document.getElementById("selected-node-image").style.position = "absolute";
-      document.getElementById("selected-node-image").style.top = "40%";
-      document.getElementById("selected-node-image").style.left = "20%";
-    }
-    for (var key in info_text) {
-      if (Object.prototype.hasOwnProperty.call(info_text, key)) {
-        str += info_text[key] + " ";
-      }
+    for (var index in info_text) {
+      if (str !== "") str += " | ";
+      str += info_text[index];
     }
     document.getElementById("graph-info").innerHTML = str;
   }
