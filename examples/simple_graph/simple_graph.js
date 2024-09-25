@@ -54,6 +54,10 @@ Drawing.SimpleGraph = function(options) {
 
     scene = new THREE.Scene();
 
+    // Add event listeners with passive set to false
+    controls.addEventListener('change', render, { passive: false });
+ 
+
     // Node geometry
     if (that.layout === "2d") {
       geometry = new THREE.SphereGeometry(100); // node size
@@ -112,14 +116,27 @@ Drawing.SimpleGraph = function(options) {
     var imageElement = document.createElement('img');
     imageElement.setAttribute('id', 'selected-node-image');
     imageElement.style.position = 'absolute';
-    imageElement.style.top = '50%';
-    imageElement.style.left = '50%';
-    imageElement.style.transform = 'translate(-50%, -50%)';
-    imageElement.style.width = '90%';
+    imageElement.style.top = '0px';
+    imageElement.style.maxWidth = '50vw';
+    imageElement.style.maxHeight = '100vh';
+    imageElement.style.width = 'auto';
     imageElement.style.height = 'auto';
+    if (window.innerWidth > 500) {
+      imageElement.style.left = '50vw';
+    } else {
+      imageElement.style.left = '0px';
+      imageElement.style.top = '50vh';
+      imageElement.style.transform = 'translate(0, -50%)';
+    }
     document.body.appendChild(imageElement);
   }
-
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ *  Creates a graph with random nodes and edges.
+ *  Number of nodes and edges can be set with
+ *  numNodes and numEdges.
+ */
+/******  385015ce-169f-499e-be1c-6402e264ed60  *******/
   function createGraph() {
     var node = new GRAPHVIS.Node(0);
     node.data.title = "This is node " + node.id;
