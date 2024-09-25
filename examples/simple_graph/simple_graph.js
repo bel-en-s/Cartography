@@ -103,10 +103,10 @@
       scene = new THREE.Scene();
   
       // Node geometry
-      if(that.layout === "3d") {
+      if(that.layout === "2d") {
         geometry = new THREE.SphereGeometry(30);
       } else {
-        geometry = new THREE.BoxGeometry( 50, 50, 0 );
+        geometry = new THREE.BoxGeometry( 300, 300, 100 );
       }
   
       // Create node selection, if set
@@ -197,7 +197,7 @@
      *  Create a node object and add it to the scene.
      */
     function drawNode(node) {
-      var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {  color: Math.random() * 0xe0e0e0, opacity: 0.8 } ) );
+      var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture("img/" + (node.id % 39 + 1) + ".JPG") } ) );
       var label_object;
   
       if(that.show_labels) {
@@ -221,6 +221,13 @@
       draw_object.id = node.id;
       node.data.draw_object = draw_object;
       node.position = draw_object.position;
+  
+      draw_object.onclick = function() {
+        var img = document.getElementById("hover-img");
+        img.src = "img/" + (node.id % 39 + 1) + ".JPG";
+        document.getElementById("hover-image").style.display = "block";
+      }
+  
       scene.add( node.data.draw_object );
     }
   
@@ -229,7 +236,7 @@
      *  Create an edge object (line) and add it to the scene.
      */
     function drawEdge(source, target) {
-        material = new THREE.LineBasicMaterial({ color: 0x606060 });
+        material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
   
         var tmp_geo = new THREE.Geometry();
         tmp_geo.vertices.push(source.data.draw_object.position);
