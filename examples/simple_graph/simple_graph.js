@@ -197,7 +197,7 @@
      *  Create a node object and add it to the scene.
      */
     function drawNode(node) {
-      var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture("img/" + (node.id % 39 + 1) + ".JPG") } ) );
+      var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } ) );
       var label_object;
   
       if(that.show_labels) {
