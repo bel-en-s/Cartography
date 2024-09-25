@@ -52,7 +52,7 @@ var Drawing = Drawing || {};
 Drawing.SphereGraph = function(options) {
   options = options || {};
 
-  this.layout = options.layout || "2d";
+  this.layout = options.layout || "3d";
   this.show_stats = options.showStats || false;
   this.show_info = options.showInfo || false;
   this.selection = options.selection || false;
@@ -112,7 +112,7 @@ Drawing.SphereGraph = function(options) {
     scene.add(mesh);
 
     // Create node geometry (will be used in drawNode())
-    geometry = new THREE.SphereGeometry( 25, 25, 0 );
+    geometry = new THREE.SphereGeometry( 25, 25, 110 );
 
     // Create node selection, if set
     if(that.selection) {
