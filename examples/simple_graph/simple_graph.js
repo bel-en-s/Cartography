@@ -103,10 +103,10 @@
       scene = new THREE.Scene();
   
       // Node geometry
-      if(that.layout === "3d") {
+      if(that.layout === "2d") {
         geometry = new THREE.SphereGeometry(30);
       } else {
-        geometry = new THREE.BoxGeometry( 50, 50, 0 );
+        geometry = new THREE.BoxGeometry( 500, 500, 0 );
       }
   
       // Create node selection, if set
