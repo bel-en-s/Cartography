@@ -1,4 +1,6 @@
-### Notice: This repo is not maintained anymore but PRs are still welcome.
+### bel-en-s
+
+cuando se suben imagenes para la textura de los objetos se rompe, probar loaders distintos. 
 
 # Graph-Visualization
 
