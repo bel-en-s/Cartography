@@ -103,10 +103,10 @@
       scene = new THREE.Scene();
   
       // Node geometry
-      if(that.layout === "2d") {
+      if(that.layout === "3d") {
         geometry = new THREE.SphereGeometry(30);
       } else {
-        geometry = new THREE.BoxGeometry( 500, 500, 0 );
+        geometry = new THREE.BoxGeometry( 50, 50, 0 );
       }
   
       // Create node selection, if set
@@ -191,27 +191,13 @@
       info_text.nodes = "Nodes " + graph.nodes.length;
       info_text.edges = "Edges " + graph.edges.length;
     }
-    
-    document.addEventListener('touchmove', function(event) {
-      event.preventDefault(); // prevent the default behavior
-  }, { passive: false }); // Explicitly set passive to false
+  
   
     /**
      *  Create a node object and add it to the scene.
      */
     function drawNode(node) {
-      var textureLoader = new THREE.TextureLoader();
-      var texture = textureLoader.load('txt/rocky.jpg'); // Load your image texture
-  
-      // Create a material with the loaded texture
-      var material = new THREE.MeshBasicMaterial({
-          map: texture,  // Assign the texture to the material
-          opacity: 0.8,
-          transparent: true
-      });
-  
-      // Create the mesh (node) with geometry and the texture-based material
-      var draw_object = new THREE.Mesh(geometry, material);
+      var draw_object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( {  color: Math.random() * 0xe0e0e0, opacity: 0.8 } ) );
       var label_object;
   
       if(that.show_labels) {
@@ -243,7 +229,7 @@
      *  Create an edge object (line) and add it to the scene.
      */
     function drawEdge(source, target) {
-        material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        material = new THREE.LineBasicMaterial({ color: 0x606060 });
   
         var tmp_geo = new THREE.Geometry();
         tmp_geo.vertices.push(source.data.draw_object.position);
