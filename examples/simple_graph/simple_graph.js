@@ -58,8 +58,8 @@
     this.show_labels = options.showLabels || false;
     this.selection = options.selection || false;
     this.limit = options.limit || 10;
-    this.nodes_count = options.numNodes || 20;
-    this.edges_count = options.numEdges || 10;
+    this.nodes_count = options.numNodes || 2;
+    this.edges_count = options.numEdges || 1;
   
     var camera, controls, scene, renderer, interaction, geometry, object_selection;
     var stats;
@@ -98,13 +98,15 @@
   
       controls.keys = [ 65, 83, 68 ];
   
-      controls.addEventListener('change', render);
+      controls.minDistance = 1000;
+      controls.maxDistance = 100000;
   
+      controls.addEventListener('change', render);
       scene = new THREE.Scene();
   
       // Node geometry
       if(that.layout === "3d") {
-        geometry = new THREE.SphereGeometry(30);
+        geometry = new THREE.SphereGeometry(300);
       } else {
         geometry = new THREE.BoxGeometry( 50, 50, 0 );
       }
@@ -153,35 +155,44 @@
      *  numNodes and numEdges.
      */
     function createGraph() {
-  
-      var node = new GRAPHVIS.Node(0);
-      node.data.title = "This is node " + node.id;
-      graph.addNode(node);
-      drawNode(node);
-  
+      var numNodes = 16; // change this to set the number of nodes
+      var edgesToAdd = [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [4, 5],
+        [5, 6],
+        [6, 7],
+        [7, 8],
+        [8, 9],
+        [9, 10],
+        [10, 11],
+        [11, 12],
+        [12, 13],
+        [13, 14],
+        [14, 15],
+        [15, 0]
+      ]; // change this to set the edges
+
       var nodes = [];
-      nodes.push(node);
-  
-      var steps = 1;
-      while(nodes.length !== 0 && steps < that.nodes_count) {
-        node = nodes.shift();
-  
-        var numEdges = randomFromTo(1, that.edges_count);
-        for(var i=1; i <= numEdges; i++) {
-          var target_node = new GRAPHVIS.Node(i*steps);
-          if(graph.addNode(target_node)) {
-            target_node.data.title = "This is node " + target_node.id;
-  
-            drawNode(target_node);
-            nodes.push(target_node);
-            if(graph.addEdge(node, target_node)) {
-              drawEdge(node, target_node);
-            }
-          }
-        }
-        steps++;
+      for (var i = 0; i < numNodes; i++) {
+        var node = new GRAPHVIS.Node(i);
+        node.data.title = "This is node " + node.id;
+        graph.addNode(node);
+        drawNode(node);
+        nodes.push(node);
       }
-  
+
+      // Create edges based on the edgesToAdd array
+      edgesToAdd.forEach(function(edge) {
+        var node1 = nodes[edge[0]];
+        var node2 = nodes[edge[1]];
+        if (graph.addEdge(node1, node2)) {
+          drawEdge(node1, node2);
+        }
+      });
+
       that.layout_options.width = that.layout_options.width || 2000;
       that.layout_options.height = that.layout_options.height || 2000;
       that.layout_options.iterations = that.layout_options.iterations || 100000;
