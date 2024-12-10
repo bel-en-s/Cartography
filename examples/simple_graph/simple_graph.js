@@ -37,14 +37,14 @@ Drawing.SimpleGraph = function(options) {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     
-    camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 1000000);
-    camera.position.z = 20000;
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 10, 1000000);
+    camera.position.z = 15000;
     
     controls = new THREE.TrackballControls(camera);
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 5.2;
     controls.panSpeed = 1;
-    controls.noZoom = false;
+    controls.noZoom = true;
     controls.noPan = false;
     controls.staticMoving = false;
     controls.dynamicDampingFactor = 0.3;
@@ -173,7 +173,7 @@ Drawing.SimpleGraph = function(options) {
   }
 
   function drawEdge(source, target) {
-    var material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
+    var material = new THREE.LineBasicMaterial({ color: 0xFF0000 }); // red lines
     var tmp_geo = new THREE.Geometry();
     tmp_geo.vertices.push(source.data.draw_object.position);
     tmp_geo.vertices.push(target.data.draw_object.position);
@@ -286,13 +286,13 @@ Drawing.SimpleGraph = function(options) {
     popup.style.justifyContent = "center";
 
     var closeBtn = document.createElement("div");
-    closeBtn.innerHTML = "&#10006;";  // Close icon
+    closeBtn.innerHTML = "&#10006;";
     closeBtn.style.position = "absolute";
     closeBtn.style.top = "0px";
     closeBtn.style.right = "0px";
     closeBtn.style.color = "#fff";
     closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontSize = "30px"; // Bigger icon
+    closeBtn.style.fontSize = "20px";
     closeBtn.onclick = function() {
       if(document.body.contains(popup)){
         document.body.removeChild(popup);
