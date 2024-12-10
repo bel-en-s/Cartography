@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <!-- Evita zoom en dispositivos móviles -->
+    <!-- Prevent user from zooming on mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <script type="text/javascript" src="../../build/graph.min.js"></script>
@@ -17,14 +17,10 @@
           numNodes: 50, 
           graphLayout: {attraction: 5, repulsion: 0.5}, 
           showStats: true, 
-          showInfo: true
+          showInfo: true,
+          cameraPositionZ: 5000
         });
       }
-
-      // Evita scroll y zoom del body en móviles
-      document.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-      }, { passive: false });
     </script>
 
     <style type="text/css">
@@ -35,7 +31,6 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        touch-action: none; /* Evita interacciones nativas de zoom y scroll */
       }
 
       #graph-info {
@@ -89,20 +84,25 @@
         max-width: 200px; 
         max-height: 200px;
       }
+
+      /* Instagram logo style */
+      #instagram-logo {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+      }
+
+      #instagram-logo img {
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body onload="createDrawing()">
     <div id="options">
       <h1>CARTOGRAFÍA DE AFECTOS</h1>
-      <form>
-        <!-- Ejemplo para mostrar labels, actualmente deshabilitado -->
-        <!--
-        <p>
-          <input type="checkbox" id="show_labels" onclick="drawing.show_labels = this.checked;">
-          <label for="show_labels">Show labels</label>
-        </p>
-        -->
-      </form>
     </div>
 
     <div id="hover-image">
@@ -112,6 +112,13 @@
     <div style="position: absolute; bottom: 0;">
       <h1>atlas</h1>
       CARTOGRAFIAS DEL DESEO
+    </div>
+
+    <!-- Instagram Logo with link -->
+    <div id="instagram-logo">
+      <a href="https://www.instagram.com/bel.en.s/?hl=es" target="_blank">
+        <img src="img/insta1.png" alt="Instagram">
+      </a>
     </div>
   </body>
 </html>
