@@ -1,38 +1,43 @@
-<!--
-  This is an example html file with some options added. The minimum html file for
-  the graph visualization is:
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Graph Visualization</title>
-      <script type="text/javascript" src="build/graph.min.js"></script>
-    </head>
-    <body onload="new Drawing.SimpleGraph({layout: '3d', showStats: true, showInfo: true})">
-    </bod>
-  </html>
--->
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-  f<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Evita zoom en dispositivos móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <script type="text/javascript" src="../../build/graph.min.js"></script>
     <script type="text/javascript" src="simple_graph.js"></script>
 
     <script type="text/javascript">
       var drawing;
       function createDrawing() {
-        drawing = new Drawing.SimpleGraph({layout: '3d', selection: true, numNodes: 50, graphLayout:{attraction: 5, repulsion: 0.5}, showStats: true, showInfo: true});
+        drawing = new Drawing.SimpleGraph({
+          layout: '3d', 
+          selection: true, 
+          numNodes: 50, 
+          graphLayout: {attraction: 5, repulsion: 0.5}, 
+          showStats: true, 
+          showInfo: true
+        });
       }
+
+      // Evita scroll y zoom del body en móviles
+      document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+      }, { passive: false });
     </script>
 
     <style type="text/css">
-      body {
+      html, body {
         margin: 0;
         padding: 0;
         font: 11px courier;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
+        touch-action: none; /* Evita interacciones nativas de zoom y scroll */
       }
+
       #graph-info {
         position: absolute;
         top: 0px;
@@ -42,57 +47,70 @@
         color: #333;
         padding: 5px 10px;
       }
+
       #options {
         position: absolute;
         top: 0;
         right: 0;
         z-index: 10;
       }
+
+      @font-face {
+        font-family: 'sonycam-original';
+        src: url('img/sonycam-original.ttf') format('truetype');
+      }
+
+      @font-face {
+        font-family: 'ALBA';
+        src: url('img/ALBA___.ttf') format('truetype');
+      }
+
+      h1 {
+        font-family: 'sonycam-original';
+        font-size: 4vh;
+      }
+
+      h2 {
+        font-family: 'ALBA';
+        font-size: 6vh;
+      }
+
+      p {
+        font-size:3vh;
+      }
+
+      #hover-image {
+        position: absolute; 
+        display: none; 
+        z-index: 10;
+      }
+
+      #hover-img {
+        max-width: 200px; 
+        max-height: 200px;
+      }
     </style>
   </head>
   <body onload="createDrawing()">
     <div id="options">
-      <style>
-        @font-face {
-          font-family: 'sonycam-original';
-          src: url('img/sonycam-original.ttf') format('truetype');
-        }
-        h1 {
-          font-family: 'sonycam-original';
-          font-size: 4vh;
-        }
-        @font-face {
-          font-family: 'ALBA';
-          src: url('img/ALBA___.ttf') format('truetype');
-        }
-        h2{
-          font-family: 'ALBA';
-          font-size: 6vh;
-        }
-        p{
-          font-size:3vh;
-        }
-      </style>
-      <h1> CARTOGRAFÍA DE AFECTOS</h1>
+      <h1>CARTOGRAFÍA DE AFECTOS</h1>
       <form>
-        <!-- <p>
+        <!-- Ejemplo para mostrar labels, actualmente deshabilitado -->
+        <!--
+        <p>
           <input type="checkbox" id="show_labels" onclick="drawing.show_labels = this.checked;">
           <label for="show_labels">Show labels</label>
-        </p> -->
-        <!-- <p>
-          <input type="button" value="Stop layout" onclick="drawing.stop_calculating();">
-        </p> -->
+        </p>
+        -->
       </form>
     </div>
 
-    <div id="hover-image" style="position: absolute; display: none; z-index: 10;">
-      <img id="hover-img" src="" alt="Node Texture" style="max-width: 200px; max-height: 200px;">
+    <div id="hover-image">
+      <img id="hover-img" src="" alt="Node Texture">
     </div>    
-
 
     <div style="position: absolute; bottom: 0;">
       <h1>atlas</h1>
-
       CARTOGRAFIAS DEL DESEO
     </div>
   </body>
