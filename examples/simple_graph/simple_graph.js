@@ -173,7 +173,7 @@ Drawing.SimpleGraph = function(options) {
   }
 
   function drawEdge(source, target) {
-    var material = new THREE.LineBasicMaterial({ color: 0xFF0000 }); // red lines
+    var material = new THREE.LineBasicMaterial({ color: 0xFF0000 });
     var tmp_geo = new THREE.Geometry();
     tmp_geo.vertices.push(source.data.draw_object.position);
     tmp_geo.vertices.push(target.data.draw_object.position);
@@ -286,13 +286,13 @@ Drawing.SimpleGraph = function(options) {
     popup.style.justifyContent = "center";
 
     var closeBtn = document.createElement("div");
-    closeBtn.innerHTML = "&#10006;";
+    closeBtn.innerHTML = "&#10006;";  // Close icon
     closeBtn.style.position = "absolute";
     closeBtn.style.top = "0px";
     closeBtn.style.right = "0px";
     closeBtn.style.color = "#fff";
     closeBtn.style.cursor = "pointer";
-    closeBtn.style.fontSize = "20px";
+    closeBtn.style.fontSize = "30px"; // Bigger icon
     closeBtn.onclick = function() {
       if(document.body.contains(popup)){
         document.body.removeChild(popup);
